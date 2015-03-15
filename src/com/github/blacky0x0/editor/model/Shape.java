@@ -5,19 +5,25 @@ package com.github.blacky0x0.editor.model;
  * Date: 15.03.15
  */
 public abstract class Shape {
+    protected Integer x;
+    protected Integer y;
     protected String name;
-    protected int x;
-    protected int y;
+
+    protected Shape(Integer x, Integer y, String name) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+    }
 
     public String getName() {
         return name;
     }
 
-    public int getX() {
+    public Integer getX() {
         return x;
     }
 
-    public int getY() {
+    public Integer getY() {
         return y;
     }
 }
