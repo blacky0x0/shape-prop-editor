@@ -20,9 +20,23 @@ public class RectangleTest {
 
         Rectangle rectangle = new Rectangle(x, y, name, width, height);
 
-        Assert.assertEquals(rectangle.getProperties().size(), 2);
+        Assert.assertEquals(2, rectangle.getProperties().size());
 
-        Assert.assertEquals(rectangle.getProperties().get(Property.WIDTH), 10);
-        Assert.assertEquals(rectangle.getProperties().get(Property.HEIGHT), 20);
+        Assert.assertEquals(width, rectangle.getProperties().get(Property.WIDTH));
+        Assert.assertEquals(height, rectangle.getProperties().get(Property.HEIGHT));
+    }
+
+    @Test (expected = Exception.class)
+    public void testChangeProperties() throws Exception {
+        int x = 1;
+        int y = 5;
+        int width = 10;
+        int height = 20;
+        String name = "new rectangle";
+
+        Rectangle rectangle = new Rectangle(x, y, name, width, height);
+
+        // Expect an exception. Collection must be unmodifiable
+        rectangle.getProperties().clear();
     }
 }

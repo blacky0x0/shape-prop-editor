@@ -8,6 +8,7 @@ import java.util.HashMap;
  */
 public class Rectangle extends Shape {
 
+    // TODO: collection must be unmodifiable
     protected HashMap<Property, Object> properties = new HashMap<>();
 
     public Rectangle(Integer x, Integer y,
