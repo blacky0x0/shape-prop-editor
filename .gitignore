@@ -10,6 +10,8 @@
 .settings/
 .prefs
 *.prefs
+.classpath
+.project
 
 # Intellij
 .idea/
