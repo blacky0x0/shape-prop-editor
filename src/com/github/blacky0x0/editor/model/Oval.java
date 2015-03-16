@@ -13,14 +13,28 @@ public class Oval extends Shape {
     protected boolean isCircle = false;
 
     public Oval(Integer x, Integer y,
-                     String name,
-                     Integer radiusX, Integer radiusY,
-                     boolean isCircle) {
+                String name,
+                Integer radius) {
         super(x, y, name);
-        this.isCircle = isCircle;
-        properties.put(Property.RADIUS_X, radiusX);
-        properties.put(Property.RADIUS_Y, radiusY);
+        this.isCircle = true;
+        properties.put(Property.RADIUS, radius);
+    }
 
+    public Oval(Integer x, Integer y,
+                     String name,
+                     Integer radiusX, Integer radiusY) {
+        super(x, y, name);
+
+        if (radiusX.equals(radiusY))
+        {
+            this.isCircle = true;
+            properties.put(Property.RADIUS, radiusX);
+        }
+        else
+        {
+            properties.put(Property.RADIUS_X, radiusX);
+            properties.put(Property.RADIUS_Y, radiusY);
+        }
     }
 
     public HashMap<Property, Object> getProperties() {

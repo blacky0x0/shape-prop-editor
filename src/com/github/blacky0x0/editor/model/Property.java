@@ -8,6 +8,7 @@ public enum Property {
 
     WIDTH("Width"),
     HEIGHT("Height"),
+    RADIUS("Radius"),
     RADIUS_X("RadiusX"),
     RADIUS_Y("RadiusY");
 
