@@ -1,31 +1,30 @@
 package com.github.blacky0x0.editor.gui;
 
-import java.awt.Point;
-import java.util.HashSet;
-
+import com.github.blacky0x0.editor.model.Oval;
+import com.github.blacky0x0.editor.model.Property;
+import com.github.blacky0x0.editor.model.Rectangle;
+import com.github.blacky0x0.editor.model.Shape;
+import com.github.blacky0x0.editor.repository.ListStorage;
+import com.github.blacky0x0.editor.util.GuiUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
-import com.github.blacky0x0.editor.model.Rectangle;
-import com.github.blacky0x0.editor.model.Shape;
-import com.github.blacky0x0.editor.util.GuiUtil;
+import java.awt.*;
+import java.util.Map;
 
 /**
  * User: blacky
  * Date: 15.03.15
  */
 public class SimplePropertiesEditor {
+
+    // This in-memory storage contains all shapes
+    private ListStorage storage = new ListStorage();
 
     private final Display display = new Display ();
 
@@ -51,10 +50,11 @@ public class SimplePropertiesEditor {
     private final String EXIT_TEXT = "E&xit";
     private final int EXIT_ACCELERATOR = SWT.MOD1 + 'X';
 
-    // Table
-    private Table table;
+    // A sashform contains two tables
     private SashForm sashForm;
-    private List list;
+    // Two tables
+    private Table shapesTable;
+    private Table propertiesTable;
 
     public static void main (String [] args) {
         SimplePropertiesEditor editor = new SimplePropertiesEditor();
@@ -65,68 +65,101 @@ public class SimplePropertiesEditor {
 
         initMenu();
 
-        initTable();
-
         initData();
+
+        initTables();
 
         finishInit();
 
     }
 
-    private void initTable() {
+    private void initTables() {
         
         sashForm = new SashForm(shell, SWT.NONE);
 
-        table = new Table (sashForm, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
-        table.setHeaderVisible (true);
+        shapesTable = new Table (sashForm, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+        shapesTable.setHeaderVisible(true);
 
-        list = new List(sashForm, SWT.BORDER);
-        sashForm.setWeights(new int[]{1, 1});
+        propertiesTable = new Table(sashForm, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+        propertiesTable.setHeaderVisible(true);
 
+        sashForm.setWeights(new int[]{3, 2});
+
+        // init a table with shapes
         String[] titles = {"Name", "Type", "X", "Y"};
 
-//        TableColumn columnId = new TableColumn (table, SWT.NONE);
-//        columnId.setText ("id");
-//        columnId.setWidth(80);
-
-        TableColumn columnName = new TableColumn (table, SWT.NONE);
+        TableColumn columnName = new TableColumn (shapesTable, SWT.NONE);
         columnName.setText ("Name");
         columnName.setWidth(80);
 
-        TableColumn columnType = new TableColumn (table, SWT.NONE);
+        TableColumn columnType = new TableColumn (shapesTable, SWT.NONE);
         columnType.setText ("Type");
         columnType.setWidth(80);
 
-        TableColumn columnX = new TableColumn (table, SWT.NONE);
+        TableColumn columnX = new TableColumn (shapesTable, SWT.NONE);
         columnX.setText ("X");
         columnX.setWidth(60);
 
-        TableColumn columnY = new TableColumn (table, SWT.NONE);
+        TableColumn columnY = new TableColumn (shapesTable, SWT.NONE);
         columnY.setText ("Y");
         columnY.setWidth(60);
 
 //         for (int i=0; i<titles.length; i++) {
-//            TableColumn column = new TableColumn (table, SWT.NONE);
+//            TableColumn column = new TableColumn (shapesTable, SWT.NONE);
 //            column.setText (titles [i]);
 //         }
 
-        int count = 5;
-        for (int i = 0; i < count; i++) {
-            TableItem item = new TableItem (table, SWT.NONE);
+        for (Shape shape : storage.getList()) {
+            TableItem item = new TableItem (shapesTable, SWT.NONE);
 
-            item.setText (0, "name");
-            item.setText (1, "type");
-            item.setText (2, "x");
-            item.setText (3, "y");
-
+            item.setText (0, shape.getName());
+            item.setText (1, shape.getClass().getSimpleName());
+            item.setText (2, shape.getX().toString());
+            item.setText (3, shape.getY().toString());
         }
 
-//        new TableItem (table, SWT.NONE).setData(new Rectangle(1, 2, "r", 10, 20));
-
-        for (int i = 0; i < titles.length; i++) {
-            table.getColumn(i).pack();
+        for (int i = 0; i < shapesTable.getColumnCount(); i++) {
+            shapesTable.getColumn(i).pack();
         }
 
+        // set two columns for a table with properties
+        TableColumn columnProperty = new TableColumn (propertiesTable, SWT.NONE);
+        columnProperty.setText ("Property");
+        columnProperty.setWidth(80);
+
+        TableColumn columnValue = new TableColumn (propertiesTable, SWT.NONE);
+        columnValue.setText ("Value");
+        columnValue.setWidth(80);
+
+        // fill a table with properties
+        Shape selectedShape = storage.getList().get(0);
+
+        TableItem itemName = new TableItem (propertiesTable, SWT.NONE);
+        itemName.setText (0, "Name");
+        itemName.setText (1, selectedShape.getName());
+
+        TableItem itemType = new TableItem (propertiesTable, SWT.NONE);
+        itemType.setText (0, "Type");
+        itemType.setText (1, selectedShape.getClass().getSimpleName());
+
+        TableItem itemX = new TableItem (propertiesTable, SWT.NONE);
+        itemX.setText (0, "X");
+        itemX.setText (1, selectedShape.getX().toString());
+
+        TableItem itemY = new TableItem (propertiesTable, SWT.NONE);
+        itemY.setText (0, "Y");
+        itemY.setText (1, selectedShape.getY().toString());
+
+        for (Map.Entry<Property, Object> property : storage.getList().get(0).getProperties().entrySet()) {
+            TableItem item = new TableItem (propertiesTable, SWT.NONE);
+
+            item.setText (0, property.getKey().toString());
+            item.setText (1, property.getValue().toString());
+        }
+
+        for (int i = 0; i < propertiesTable.getColumnCount(); i++) {
+            propertiesTable.getColumn(i).pack();
+        }
     }
 
     private void finishInit() {
@@ -146,17 +179,12 @@ public class SimplePropertiesEditor {
     }
 
     private void initData() {
-        // This in-memory storage contains all shapes
-        HashSet<Shape> storage = new HashSet<>();
 
-        storage.add(new Rectangle(1, 2, "r", 10, 20));
-        storage.add(new Rectangle(1, 2, "r" ,10, 20));
-        storage.add(new Rectangle(1, 2, "r" ,10, 20));
+        storage.add(new Rectangle(1, 2, "rectangle #01", 10, 20));
+        storage.add(new Rectangle(3, 4, "rectangle #02", 30, 40));
+        storage.add(new Oval(5, 6, "oval #03", 50, 60));
+        storage.add(new Oval(7, 8, "cycle #04", 80));
 
-//        List list = new List (shell, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-//        //for (shape : storage)
-//        list.add("" + "123");//shape.toString());
-//        list.add("" + "12343");//shape.toString());
     }
 
     public void initMenu() {
@@ -182,6 +210,20 @@ public class SimplePropertiesEditor {
         createRectangle.setText(CREATE_RECTANGLE_TEXT);
         createOval.setText(CREATE_OVAL_TEXT);
         removeShape.setText(REMOVE_SHAPE_TEXT);
+
+        createRectangle.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event e) {
+                System.out.println("Make a rectangle shape");
+            }
+        });
+
+        createOval.addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event e) {
+                System.out.println("Make an oval shape");
+            }
+        });
 
         removeShape.setAccelerator(REMOVE_SHAPE_ACCELERATOR);
         removeShape.addListener(SWT.Selection, new Listener() {
