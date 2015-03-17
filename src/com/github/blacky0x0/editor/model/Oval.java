@@ -8,40 +8,42 @@ import java.util.HashMap;
  */
 public class Oval extends Shape {
 
-    // TODO: collection must be unmodifiable
-    protected HashMap<Property, Object> properties = new HashMap<>();
-    protected boolean isCircle = false;
+    protected Integer radiusX;
+    protected Integer radiusY;
 
-    public Oval(Integer x, Integer y,
-                String name,
-                Integer radius) {
-        super(x, y, name);
-        this.isCircle = true;
-        properties.put(Property.RADIUS, radius);
-    }
+    protected boolean isCircle = false;
 
     public Oval(Integer x, Integer y,
                      String name,
                      Integer radiusX, Integer radiusY) {
         super(x, y, name);
 
-        if (radiusX.equals(radiusY))
-        {
-            this.isCircle = true;
-            properties.put(Property.RADIUS, radiusX);
-        }
-        else
-        {
-            properties.put(Property.RADIUS_X, radiusX);
-            properties.put(Property.RADIUS_Y, radiusY);
-        }
+        this.isCircle = true;
+        this.radiusX = radiusX;
+        this.radiusY = radiusY;
     }
 
-    public HashMap<Property, Object> getProperties() {
-        return properties;
+    public Integer getRadiusX() {
+        return radiusX;
+    }
+
+    public void setRadiusX(Integer radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public Integer getRadiusY() {
+        return radiusY;
+    }
+
+    public void setRadiusY(Integer radiusY) {
+        this.radiusY = radiusY;
     }
 
     public boolean isCircle() {
         return isCircle;
+    }
+
+    public void setCircle(boolean isCircle) {
+        this.isCircle = isCircle;
     }
 }

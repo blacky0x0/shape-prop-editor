@@ -8,18 +8,31 @@ import java.util.HashMap;
  */
 public class Rectangle extends Shape {
 
-    // TODO: collection must be unmodifiable
-    protected HashMap<Property, Object> properties = new HashMap<>();
+    protected Integer width;
+    protected Integer height;
 
     public Rectangle(Integer x, Integer y,
                      String name,
                      Integer width, Integer height) {
         super(x, y, name);
-        properties.put(Property.WIDTH, width);
-        properties.put(Property.HEIGHT, height);
+        this.width = width;
+        this.height = height;
     }
 
-    public HashMap<Property, Object> getProperties() {
-        return properties;
+    public Integer getWidth() {
+        return width;
     }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
 }

@@ -150,12 +150,12 @@ public class SimplePropertiesEditor {
         itemY.setText (0, "Y");
         itemY.setText (1, selectedShape.getY().toString());
 
-        for (Map.Entry<Property, Object> property : storage.getList().get(0).getProperties().entrySet()) {
-            TableItem item = new TableItem (propertiesTable, SWT.NONE);
-
-            item.setText (0, property.getKey().toString());
-            item.setText (1, property.getValue().toString());
-        }
+//        for (Map.Entry<Property, Object> property : storage.getList().get(0).getProperties().entrySet()) {
+//            TableItem item = new TableItem (propertiesTable, SWT.NONE);
+//
+//            item.setText (0, property.getKey().toString());
+//            item.setText (1, property.getValue().toString());
+//        }
 
         for (int i = 0; i < propertiesTable.getColumnCount(); i++) {
             propertiesTable.getColumn(i).pack();
@@ -183,7 +183,7 @@ public class SimplePropertiesEditor {
         storage.add(new Rectangle(1, 2, "rectangle #01", 10, 20));
         storage.add(new Rectangle(3, 4, "rectangle #02", 30, 40));
         storage.add(new Oval(5, 6, "oval #03", 50, 60));
-        storage.add(new Oval(7, 8, "cycle #04", 80));
+        storage.add(new Oval(7, 8, "cycle #04", 80, 80));
 
     }
 

@@ -4,7 +4,7 @@ package com.github.blacky0x0.editor.model;
  * User: blacky
  * Date: 15.03.15
  */
-public abstract class Shape implements ShapeIF {
+public abstract class Shape { //implements ShapeIF {
     protected Integer x;
     protected Integer y;
     protected String name;
