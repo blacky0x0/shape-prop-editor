@@ -7,6 +7,7 @@ import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
 import com.github.blacky0x0.editor.util.GuiUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -218,14 +219,51 @@ public class SimplePropertiesEditor {
         createRectangle.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                System.out.println("Make a rectangle shape");
+                RectangleTitleAreaDialog dialog = new RectangleTitleAreaDialog(shell);
+                dialog.create();
+
+                if (dialog.open() == org.eclipse.jface.window.Window.OK) {
+                    // Get a rectangle from dialog
+                    Rectangle rectangle = dialog.getRectangle();
+
+                    TableItem item = new TableItem (shapesTable, SWT.NONE);
+
+                    item.setText (0, rectangle.getName());
+                    item.setText (1, rectangle.getClass().getSimpleName());
+                    item.setText (2, rectangle.getX().toString());
+                    item.setText (3, rectangle.getY().toString());
+
+                    storage.add(rectangle);
+
+                    logger.info(dialog.getRectangle().toString());
+                }
+
             }
         });
 
         createOval.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                System.out.println("Make an oval shape");
+
+                OvalTitleAreaDialog dialog = new OvalTitleAreaDialog(shell);
+                dialog.create();
+
+                if (dialog.open() == org.eclipse.jface.window.Window.OK) {
+                    // Get a rectangle from dialog
+                    Oval oval = dialog.getOval();
+
+                    TableItem item = new TableItem (shapesTable, SWT.NONE);
+
+                    item.setText (0, oval.getName());
+                    item.setText (1, oval.getClass().getSimpleName());
+                    item.setText (2, oval.getX().toString());
+                    item.setText (3, oval.getY().toString());
+
+                    storage.add(oval);
+
+                    logger.info(dialog.getOval().toString());
+                }
+
             }
         });
 
