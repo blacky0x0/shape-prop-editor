@@ -140,17 +140,17 @@ public class OvalTitleAreaDialog extends TitleAreaDialog {
             @Override
             public void handleEvent (Event event) {
 
-                // TODO: Implement hide/show the spinnerRadiusY
-
                 if (isCircle.getSelection())
                 {
                     labelRadiusX.setText("Radius:");
-                    labelRadiusY.setText("");
+                    labelRadiusY.setVisible(false);
+                    spinnerRadiusY.setVisible(false);
                 }
                 else
                 {
                     labelRadiusX.setText("RadiusX:");
-                    labelRadiusY.setText("RadiusY");
+                    labelRadiusY.setVisible(true);
+                    spinnerRadiusY.setVisible(true);
                 }
 
             }
