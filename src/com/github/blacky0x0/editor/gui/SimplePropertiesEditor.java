@@ -6,6 +6,7 @@ import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
 import com.github.blacky0x0.editor.util.GuiUtil;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -13,6 +14,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+
+import java.util.logging.*;
 
 import java.awt.*;
 import java.util.Map;
@@ -22,6 +25,7 @@ import java.util.Map;
  * Date: 15.03.15
  */
 public class SimplePropertiesEditor {
+    protected final Logger logger = Logger.getLogger(getClass().getName());
 
     // This in-memory storage contains all shapes
     private ListStorage storage = new ListStorage();
@@ -229,7 +233,49 @@ public class SimplePropertiesEditor {
         removeShape.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                System.out.println("Selected shapes were removed");
+
+                // Are there any selected rows in the table?
+                if (shapesTable.getSelectionCount() == 0)
+                {
+                    MessageDialog.openInformation(shell,
+                            "Removing selected items from the table",
+                            "There are no selected items in the table");
+                    return;
+                }
+
+                // Grab information about selected items
+                StringBuilder sb = new StringBuilder();
+                for (TableItem item : shapesTable.getSelection()) {
+                    sb.append("\t\t");
+                    sb.append(item);
+                    sb.append("\n");
+                }
+
+                // User must confirm removing items
+                MessageDialog dialog = new MessageDialog(shell,
+                        "Removing selected items from the table", null,
+                        "Next items will be removed:\n".concat(sb.toString()),
+                        MessageDialog.QUESTION,
+                        new String[] { "OK", "Cancel" }, 1);
+
+                // Cancel => 1; OK => 0; Simple close => -1
+                if (dialog.open() == 0)
+                {
+                    // TODO: refactor after bringing into service a TableView
+
+                    shapesTable.remove(shapesTable.getSelectionIndices());
+
+                    // TODO: remove items from storage (model)
+                    // it must automatically updates the view
+                    logger.info("Selected shapes have been removed:\n"
+                            .concat(sb.toString()));
+                }
+                else
+                {
+                    // Do nothing
+                    logger.info("Canceling operation");
+                }
+
             }
         });
 
