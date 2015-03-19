@@ -1,6 +1,5 @@
 package com.github.blacky0x0.editor.model;
 
-import java.util.HashMap;
 
 /**
  * User: blacky
@@ -24,7 +23,7 @@ public class Rectangle extends Shape {
     }
 
     public void setWidth(Integer width) {
-        this.width = width;
+        propertyChangeSupport.firePropertyChange("width", this.width, this.width = width);
     }
 
     public Integer getHeight() {
@@ -32,7 +31,19 @@ public class Rectangle extends Shape {
     }
 
     public void setHeight(Integer height) {
-        this.height = height;
+        propertyChangeSupport.firePropertyChange("height", this.height, this.height = height);
+    }
+
+    @Override
+    public String toString() {
+        return "Rectangle{" +
+                "name='" + name + '\'' +
+                ", type='" + getClass().getSimpleName() + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                "} ";
     }
 
 }
