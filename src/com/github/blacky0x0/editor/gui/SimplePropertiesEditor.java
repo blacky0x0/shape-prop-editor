@@ -99,7 +99,7 @@ public class SimplePropertiesEditor {
         display.dispose();
     }
 
-    public void init() {
+    private void init() {
 
         initMenu();
 
@@ -156,7 +156,7 @@ public class SimplePropertiesEditor {
 
     }
 
-    public void initMenu() {
+    private void initMenu() {
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         shell.setMenuBar(bar);
 
