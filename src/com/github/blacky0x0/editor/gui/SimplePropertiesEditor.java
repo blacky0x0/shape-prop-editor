@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -22,6 +23,9 @@ import java.util.logging.*;
 import java.awt.*;
 
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.custom.StyledText;
 
 /**
  * User: blacky
@@ -67,6 +71,8 @@ public class SimplePropertiesEditor {
     private RectangleForm rectangleForm;
     private OvalForm ovalForm;
 
+    private Label lblSelectOneRow;
+
     public static void main (String [] args) {
 
         Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
@@ -104,18 +110,21 @@ public class SimplePropertiesEditor {
     public void hidePropertiesForm() {
         ovalForm.setVisible(false);
         rectangleForm.setVisible(false);
+        lblSelectOneRow.setVisible(true);
     }
 
     public void updateForm(Rectangle rectangle) {
         ovalForm.setVisible(false);
         rectangleForm.updateForm(rectangle);
         rectangleForm.setVisible(true);
+        lblSelectOneRow.setVisible(false);
     }
 
     public void updateForm(Oval oval) {
         rectangleForm.setVisible(false);
         ovalForm.updateForm(oval);
         ovalForm.setVisible(true);
+        lblSelectOneRow.setVisible(false);
     }
 
     private void initControls() {
@@ -127,15 +136,21 @@ public class SimplePropertiesEditor {
 
         // composite form to show properties
         propertyForm = new Composite(sashForm, SWT.NONE);
-        propertyForm.setLayout(new FormLayout());
         propertyForm.setVisible(true);
+        propertyForm.setLayout(null);
 
         rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
+        rectangleForm.setBounds(0, 0, 190, 270);
         ovalForm = new OvalForm(propertyForm, SWT.NONE);
+        ovalForm.setBounds(0, 0, 190, 270);
 
         // hide forms if no selection in the table
         rectangleForm.setVisible(false);
         ovalForm.setVisible(false);
+        
+        lblSelectOneRow = new Label(propertyForm, SWT.NONE);
+        lblSelectOneRow.setBounds(10, 23, 204, 29);
+        lblSelectOneRow.setText("Whether a row is selected?");
 
         sashForm.setWeights(new int[] {7,4});
 
