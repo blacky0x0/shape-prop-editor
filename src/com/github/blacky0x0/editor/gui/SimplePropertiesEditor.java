@@ -6,6 +6,7 @@ import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
 import com.github.blacky0x0.editor.util.GuiUtil;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -15,14 +16,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import java.util.logging.*;
-
 import java.awt.*;
 import java.util.Map;
+
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 /**
  * User: blacky
@@ -64,6 +73,11 @@ public class SimplePropertiesEditor {
     private ViewShapeTable shapesTable;
     private Table propertiesTable;
 
+    // Vary properties forms
+    Composite propertyForm;
+    RectangleForm rectangleForm;
+    //OvalForm ovalForm;
+
     public static void main (String [] args) {
 
         Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
@@ -98,12 +112,36 @@ public class SimplePropertiesEditor {
 
     }
 
+    public void updateForm(Rectangle rectangle) {
+        rectangleForm.updateForm(rectangle);
+        rectangleForm.setVisible(true);
+    }
+
+    public void updateForm(Oval oval) {
+        //rectangleForm.updateForm(oval);
+        rectangleForm.setVisible(false);
+    }
+
     private void initTables() {
         
         sashForm = new SashForm(shell, SWT.NONE);
 
         // create a table with shapes
-        shapesTable = new ViewShapeTable(shell, sashForm, storage);
+        shapesTable = new ViewShapeTable(this, shell, sashForm, storage);
+
+        propertyForm = new Composite(sashForm, SWT.NONE);
+        propertyForm.setLayout(new FormLayout());
+
+        rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
+        //ovalForm = new OvalForm(this, shell, propertyForm);
+
+        rectangleForm.setVisible(false);
+
+
+        sashForm.setWeights(new int[] {3,2});
+        
+        //composite = new Composite(sashForm, SWT.NONE);
+        //sashForm.setWeights(new int[] {3,2});
 
         // create something to show properties (ie: a table / tree)
 
@@ -196,5 +234,4 @@ public class SimplePropertiesEditor {
         exit.setText(EXIT_TEXT);
         exit.setAccelerator(EXIT_ACCELERATOR);
     }
-
 }
