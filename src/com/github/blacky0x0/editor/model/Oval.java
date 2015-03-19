@@ -1,6 +1,5 @@
 package com.github.blacky0x0.editor.model;
 
-import java.util.HashMap;
 
 /**
  * User: blacky
@@ -11,14 +10,11 @@ public class Oval extends Shape {
     protected Integer radiusX;
     protected Integer radiusY;
 
-    protected boolean isCircle = false;
-
     public Oval(Integer x, Integer y,
                      String name,
                      Integer radiusX, Integer radiusY) {
         super(x, y, name);
 
-        this.isCircle = true;
         this.radiusX = radiusX;
         this.radiusY = radiusY;
     }
@@ -28,7 +24,7 @@ public class Oval extends Shape {
     }
 
     public void setRadiusX(Integer radiusX) {
-        this.radiusX = radiusX;
+        propertyChangeSupport.firePropertyChange("radiusX", this.radiusX, this.radiusX = radiusX);
     }
 
     public Integer getRadiusY() {
@@ -36,14 +32,22 @@ public class Oval extends Shape {
     }
 
     public void setRadiusY(Integer radiusY) {
-        this.radiusY = radiusY;
+        propertyChangeSupport.firePropertyChange("radiusY", this.radiusY, this.radiusY = radiusY);
     }
 
     public boolean isCircle() {
-        return isCircle;
+        return radiusX.equals(radiusY);
     }
 
-    public void setCircle(boolean isCircle) {
-        this.isCircle = isCircle;
+    @Override
+    public String toString() {
+        return "Oval{" +
+                "name='" + name + '\'' +
+                ", type='" + getClass().getSimpleName() + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", radiusX=" + radiusX +
+                ", radiusY=" + radiusY +
+                "} ";
     }
 }

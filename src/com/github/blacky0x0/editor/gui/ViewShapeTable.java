@@ -1,26 +1,26 @@
 package com.github.blacky0x0.editor.gui;
 
+import com.github.blacky0x0.editor.model.Oval;
 import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
+import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 
 import java.util.Collections;
@@ -37,9 +37,13 @@ public class ViewShapeTable extends ViewPart {
     private TableViewer viewer;
     private WritableList storage;
     private Composite parent;
+    private SimplePropertiesEditor mainWindow;
 
-
-    public ViewShapeTable(final Shell shell, final Composite parent, final WritableList storage) {
+    public ViewShapeTable(final SimplePropertiesEditor mainWindow,
+                          final Shell shell,
+                          final Composite parent,
+                          final WritableList storage) {
+        this.mainWindow = mainWindow;
         this.shell = shell;
         this.parent = parent;
         this.storage = storage;
@@ -56,6 +60,34 @@ public class ViewShapeTable extends ViewPart {
         // Define the viewer
         viewer = new TableViewer(parent);
         viewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+
+                if (!viewer.getSelection().isEmpty()) {
+                    IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+
+                    if (selection.size() == 1)
+                    {
+                        logger.info(selection.getFirstElement().toString());
+
+                        if (selection.getFirstElement() instanceof Rectangle)
+                            mainWindow.updateForm((Rectangle) selection.getFirstElement());
+                        else
+                        {
+                            if (selection.getFirstElement() instanceof Oval)
+                                mainWindow.updateForm((Oval) selection.getFirstElement());
+                        }
+
+                    }
+                    else
+                    {
+                        // A multi line selection => hide properties form
+                        mainWindow.hidePropertiesForm();
+                    }
+                }
+            }
+        });
 
         TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
         column.getColumn().setWidth(100);
@@ -123,6 +155,8 @@ public class ViewShapeTable extends ViewPart {
             logger.info(
                     "Selected shapes have been removed:\n"
                             .concat(getFormattedString(selectedShapes)));
+
+            mainWindow.hidePropertiesForm();
         }
     }
 
@@ -202,6 +236,8 @@ public class ViewShapeTable extends ViewPart {
             }
         });
 
+        final WritableValue nameValue = new WritableValue();
+
         Button change = new Button(parent, SWT.PUSH);
         change.setText("Switch X / Y");
         change.addSelectionListener(new SelectionAdapter() {
@@ -215,9 +251,21 @@ public class ViewShapeTable extends ViewPart {
                     Integer temp = shape.getY();
                     shape.setY(shape.getX());
                     shape.setX(temp);
+
+                    nameValue.setValue(shape);
                 }
             }
         });
+
+
+        DataBindingContext ctx = new DataBindingContext();
+
+        Text txtName = new Text(parent, SWT.BORDER);
+
+        IObservableValue target = WidgetProperties.text(SWT.Modify).observe(txtName);
+        IObservableValue model = BeanProperties.value("name").observeDetail(nameValue);
+        ctx.bindValue(target, model);
+
     }
 
     public static void main(String[] args) {
@@ -229,9 +277,10 @@ public class ViewShapeTable extends ViewPart {
                 Shell shell = new Shell(display);
 
                 ViewShapeTable table = new ViewShapeTable(
+                        null,
                         shell,
                         shell,
-                        new WritableList(ListStorage.getShapes(), Shape.class));
+                        new WritableList(ListStorage.getShapes(), Rectangle.class));
 
                 table.addTestButtons();
 

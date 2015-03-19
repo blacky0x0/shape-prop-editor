@@ -1,28 +1,31 @@
 package com.github.blacky0x0.editor.gui;
 
 import com.github.blacky0x0.editor.model.Oval;
-import com.github.blacky0x0.editor.model.Property;
 import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
 import com.github.blacky0x0.editor.util.GuiUtil;
+
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import java.util.logging.*;
-
 import java.awt.*;
-import java.util.Map;
+
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.custom.StyledText;
 
 /**
  * User: blacky
@@ -62,7 +65,13 @@ public class SimplePropertiesEditor {
     private SashForm sashForm;
     // Two tables
     private ViewShapeTable shapesTable;
-    private Table propertiesTable;
+
+    // Vary properties forms
+    private Composite propertyForm;
+    private RectangleForm rectangleForm;
+    private OvalForm ovalForm;
+
+    private Label lblSelectOneRow;
 
     public static void main (String [] args) {
 
@@ -90,27 +99,64 @@ public class SimplePropertiesEditor {
         display.dispose();
     }
 
-    public void init() {
+    private void init() {
 
         initMenu();
 
-        initTables();
+        initControls();
 
     }
 
-    private void initTables() {
+    public void hidePropertiesForm() {
+        ovalForm.setVisible(false);
+        rectangleForm.setVisible(false);
+        lblSelectOneRow.setVisible(true);
+    }
+
+    public void updateForm(Rectangle rectangle) {
+        ovalForm.setVisible(false);
+        rectangleForm.updateForm(rectangle);
+        rectangleForm.setVisible(true);
+        lblSelectOneRow.setVisible(false);
+    }
+
+    public void updateForm(Oval oval) {
+        rectangleForm.setVisible(false);
+        ovalForm.updateForm(oval);
+        ovalForm.setVisible(true);
+        lblSelectOneRow.setVisible(false);
+    }
+
+    private void initControls() {
         
         sashForm = new SashForm(shell, SWT.NONE);
 
         // create a table with shapes
-        shapesTable = new ViewShapeTable(shell, sashForm, storage);
+        shapesTable = new ViewShapeTable(this, shell, sashForm, storage);
 
-        // create something to show properties (ie: a table / tree)
+        // composite form to show properties
+        propertyForm = new Composite(sashForm, SWT.NONE);
+        propertyForm.setVisible(true);
+        propertyForm.setLayout(null);
 
-        //sashForm.setWeights(new int[]{3, 2});
+        rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
+        rectangleForm.setBounds(0, 0, 190, 270);
+        ovalForm = new OvalForm(propertyForm, SWT.NONE);
+        ovalForm.setBounds(0, 0, 190, 270);
+
+        // hide forms if no selection in the table
+        rectangleForm.setVisible(false);
+        ovalForm.setVisible(false);
+        
+        lblSelectOneRow = new Label(propertyForm, SWT.NONE);
+        lblSelectOneRow.setBounds(10, 23, 204, 29);
+        lblSelectOneRow.setText("Whether a row is selected?");
+
+        sashForm.setWeights(new int[] {7,4});
+
     }
 
-    public void initMenu() {
+    private void initMenu() {
         shell.setLayout(new FillLayout(SWT.HORIZONTAL));
         shell.setMenuBar(bar);
 
@@ -196,5 +242,4 @@ public class SimplePropertiesEditor {
         exit.setText(EXIT_TEXT);
         exit.setAccelerator(EXIT_ACCELERATOR);
     }
-
 }

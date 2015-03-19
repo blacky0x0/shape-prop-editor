@@ -32,7 +32,8 @@ Next libraries can be founded in eclipse zip archive (ie IDE Eclipse Kepler v4.3
 * org.eclipse.ui.workbench_3.105.0.v20130529-1406.jar
 
 
-
-
+Starting desktop application
+-------------------------
+To start this stand-alone application you must run main method from the SimplePropertiesEditor class
 
 
