@@ -1,7 +1,9 @@
 package com.github.blacky0x0.editor.repository;
 
+import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +13,17 @@ import java.util.List;
  */
 public class ListStorage {
     List<Shape> list = new LinkedList<>();
+
+    public static List<Shape> getShapes() {
+        List<Shape> shapes = new ArrayList<Shape>();
+        Shape shape = new Rectangle(10, 20, "#01", 100, 100);
+        shapes.add(shape);
+        shape = new Rectangle(30, 40, "#02", 200, 200);
+        shapes.add(shape);
+        shape = new Rectangle(50, 60, "#03", 300, 300);
+        shapes.add(shape);
+        return shapes;
+    }
 
     public ListStorage() {}
 

@@ -6,6 +6,9 @@ import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
 import com.github.blacky0x0.editor.util.GuiUtil;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
@@ -29,12 +32,12 @@ public class SimplePropertiesEditor {
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
     // This in-memory storage contains all shapes
-    private ListStorage storage = new ListStorage();
+    private WritableList storage = new WritableList(ListStorage.getShapes(), Shape.class);
 
-    private final Display display = new Display ();
+    private static final Display display = new Display ();
 
     // The application components
-    private final Shell shell = new Shell (display);
+    private static final Shell shell = new Shell (display);
 
     // The Menu hierarchy
     private final Menu bar = new Menu (shell, SWT.BAR);
@@ -58,23 +61,40 @@ public class SimplePropertiesEditor {
     // A sashform contains two tables
     private SashForm sashForm;
     // Two tables
-    private Table shapesTable;
+    private ViewShapeTable shapesTable;
     private Table propertiesTable;
 
     public static void main (String [] args) {
-        SimplePropertiesEditor editor = new SimplePropertiesEditor();
-        editor.init();
+
+        Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+            public void run() {
+                //Shell shell = new Shell(display);
+
+                SimplePropertiesEditor editor = new SimplePropertiesEditor();
+                editor.init();
+
+                // Set a window at center the current screen
+                Point locationPoint = GuiUtil.computeCenterPoint(shell.getBounds());
+                shell.setLocation((int) locationPoint.getX(), (int) locationPoint.getY());
+
+                //shell.pack();
+                shell.setSize(600, 400);
+                shell.open();
+                while (!shell.isDisposed()) {
+                    if (!display.readAndDispatch())
+                        display.sleep();
+                }
+            }
+        });
+
+        display.dispose();
     }
 
     public void init() {
 
         initMenu();
 
-        initData();
-
         initTables();
-
-        finishInit();
 
     }
 
@@ -82,114 +102,12 @@ public class SimplePropertiesEditor {
         
         sashForm = new SashForm(shell, SWT.NONE);
 
-        shapesTable = new Table (sashForm, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
-        shapesTable.setHeaderVisible(true);
+        // create a table with shapes
+        shapesTable = new ViewShapeTable(shell, sashForm, storage);
 
-        propertiesTable = new Table(sashForm, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
-        propertiesTable.setHeaderVisible(true);
+        // create something to show properties (ie: a table / tree)
 
-        sashForm.setWeights(new int[]{3, 2});
-
-        // init a table with shapes
-        String[] titles = {"Name", "Type", "X", "Y"};
-
-        TableColumn columnName = new TableColumn (shapesTable, SWT.NONE);
-        columnName.setText ("Name");
-        columnName.setWidth(80);
-
-        TableColumn columnType = new TableColumn (shapesTable, SWT.NONE);
-        columnType.setText ("Type");
-        columnType.setWidth(80);
-
-        TableColumn columnX = new TableColumn (shapesTable, SWT.NONE);
-        columnX.setText ("X");
-        columnX.setWidth(60);
-
-        TableColumn columnY = new TableColumn (shapesTable, SWT.NONE);
-        columnY.setText ("Y");
-        columnY.setWidth(60);
-
-//         for (int i=0; i<titles.length; i++) {
-//            TableColumn column = new TableColumn (shapesTable, SWT.NONE);
-//            column.setText (titles [i]);
-//         }
-
-        for (Shape shape : storage.getList()) {
-            TableItem item = new TableItem (shapesTable, SWT.NONE);
-
-            item.setText (0, shape.getName());
-            item.setText (1, shape.getClass().getSimpleName());
-            item.setText (2, shape.getX().toString());
-            item.setText (3, shape.getY().toString());
-        }
-
-        for (int i = 0; i < shapesTable.getColumnCount(); i++) {
-            shapesTable.getColumn(i).pack();
-        }
-
-        // set two columns for a table with properties
-        TableColumn columnProperty = new TableColumn (propertiesTable, SWT.NONE);
-        columnProperty.setText ("Property");
-        columnProperty.setWidth(80);
-
-        TableColumn columnValue = new TableColumn (propertiesTable, SWT.NONE);
-        columnValue.setText ("Value");
-        columnValue.setWidth(80);
-
-        // fill a table with properties
-        Shape selectedShape = storage.getList().get(0);
-
-        TableItem itemName = new TableItem (propertiesTable, SWT.NONE);
-        itemName.setText (0, "Name");
-        itemName.setText (1, selectedShape.getName());
-
-        TableItem itemType = new TableItem (propertiesTable, SWT.NONE);
-        itemType.setText (0, "Type");
-        itemType.setText (1, selectedShape.getClass().getSimpleName());
-
-        TableItem itemX = new TableItem (propertiesTable, SWT.NONE);
-        itemX.setText (0, "X");
-        itemX.setText (1, selectedShape.getX().toString());
-
-        TableItem itemY = new TableItem (propertiesTable, SWT.NONE);
-        itemY.setText (0, "Y");
-        itemY.setText (1, selectedShape.getY().toString());
-
-//        for (Map.Entry<Property, Object> property : storage.getList().get(0).getProperties().entrySet()) {
-//            TableItem item = new TableItem (propertiesTable, SWT.NONE);
-//
-//            item.setText (0, property.getKey().toString());
-//            item.setText (1, property.getValue().toString());
-//        }
-
-        for (int i = 0; i < propertiesTable.getColumnCount(); i++) {
-            propertiesTable.getColumn(i).pack();
-        }
-    }
-
-    private void finishInit() {
-        shell.setSize(600, 400);
-
-        // Set a window at center the current screen
-        Point locationPoint = GuiUtil.computeCenterPoint(shell.getBounds());
-        shell.setLocation((int) locationPoint.getX(), (int) locationPoint.getY());
-
-        shell.open ();
-
-
-        while (!shell.isDisposed ()) {
-            if (!display.readAndDispatch ()) display.sleep ();
-        }
-        display.dispose ();
-    }
-
-    private void initData() {
-
-        storage.add(new Rectangle(1, 2, "rectangle #01", 10, 20));
-        storage.add(new Rectangle(3, 4, "rectangle #02", 30, 40));
-        storage.add(new Oval(5, 6, "oval #03", 50, 60));
-        storage.add(new Oval(7, 8, "cycle #04", 80, 80));
-
+        //sashForm.setWeights(new int[]{3, 2});
     }
 
     public void initMenu() {
@@ -226,13 +144,6 @@ public class SimplePropertiesEditor {
                     // Get a rectangle from dialog
                     Rectangle rectangle = dialog.getRectangle();
 
-                    TableItem item = new TableItem (shapesTable, SWT.NONE);
-
-                    item.setText (0, rectangle.getName());
-                    item.setText (1, rectangle.getClass().getSimpleName());
-                    item.setText (2, rectangle.getX().toString());
-                    item.setText (3, rectangle.getY().toString());
-
                     storage.add(rectangle);
 
                     logger.info(dialog.getRectangle().toString());
@@ -252,13 +163,6 @@ public class SimplePropertiesEditor {
                     // Get a rectangle from dialog
                     Oval oval = dialog.getOval();
 
-                    TableItem item = new TableItem (shapesTable, SWT.NONE);
-
-                    item.setText (0, oval.getName());
-                    item.setText (1, oval.getClass().getSimpleName());
-                    item.setText (2, oval.getX().toString());
-                    item.setText (3, oval.getY().toString());
-
                     storage.add(oval);
 
                     logger.info(dialog.getOval().toString());
@@ -272,47 +176,7 @@ public class SimplePropertiesEditor {
             @Override
             public void handleEvent(Event e) {
 
-                // Are there any selected rows in the table?
-                if (shapesTable.getSelectionCount() == 0)
-                {
-                    MessageDialog.openInformation(shell,
-                            "Removing selected items from the table",
-                            "There are no selected items in the table");
-                    return;
-                }
-
-                // Grab information about selected items
-                StringBuilder sb = new StringBuilder();
-                for (TableItem item : shapesTable.getSelection()) {
-                    sb.append("\t\t");
-                    sb.append(item);
-                    sb.append("\n");
-                }
-
-                // User must confirm removing items
-                MessageDialog dialog = new MessageDialog(shell,
-                        "Removing selected items from the table", null,
-                        "Next items will be removed:\n".concat(sb.toString()),
-                        MessageDialog.QUESTION,
-                        new String[] { "OK", "Cancel" }, 1);
-
-                // Cancel => 1; OK => 0; Simple close => -1
-                if (dialog.open() == 0)
-                {
-                    // TODO: refactor after bringing into service a TableView
-
-                    shapesTable.remove(shapesTable.getSelectionIndices());
-
-                    // TODO: remove items from storage (model)
-                    // it must automatically updates the view
-                    logger.info("Selected shapes have been removed:\n"
-                            .concat(sb.toString()));
-                }
-                else
-                {
-                    // Do nothing
-                    logger.info("Canceling operation");
-                }
+               shapesTable.removeSelectedItemsWithConfirmation();
 
             }
         });
