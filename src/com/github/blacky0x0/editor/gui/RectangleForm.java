@@ -4,12 +4,11 @@ import com.github.blacky0x0.editor.model.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 
 import java.util.logging.Logger;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 /**
  * User: blacky
@@ -36,119 +35,72 @@ public class RectangleForm extends Composite {
     }
 
     protected void init() {
-
-        setLayout(new FormLayout());
+        setLayout(new GridLayout(2, false));
+        Label lblName = new Label(this, SWT.NONE);
+        lblName.setText("Name:   ");
+        //lblName.setSize(lblName.getSize().x, lblName.getSize().y + 100);
 
         txtName = new Text(this, SWT.BORDER);
-        FormData fd_txtName = new FormData();
-        fd_txtName.top = new FormAttachment(0, 19);
-        fd_txtName.right = new FormAttachment(100, -10);
-        txtName.setLayoutData(fd_txtName);
-
-        txtType = new Text(this, SWT.BORDER);
-        txtType.setEnabled(false);
-        txtType.setEditable(false);
-        FormData fd_txtType = new FormData();
-        fd_txtType.right = new FormAttachment(100, -10);
-        txtType.setLayoutData(fd_txtType);
-
-        Label lblName = new Label(this, SWT.NONE);
-        fd_txtName.left = new FormAttachment(lblName, 6);
-        FormData fd_lblName = new FormData();
-        fd_lblName.top = new FormAttachment(0, 22);
-        fd_lblName.right = new FormAttachment(100, -119);
-        lblName.setLayoutData(fd_lblName);
-        lblName.setText("Name:");
+        txtName.setText("Rectangle");
+        txtName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
         Label lblType = new Label(this, SWT.NONE);
-        fd_txtType.left = new FormAttachment(lblType, 6);
-        FormData fd_lblType = new FormData();
-        fd_lblType.right = new FormAttachment(lblName, 0, SWT.RIGHT);
-        lblType.setLayoutData(fd_lblType);
         lblType.setText("Type:");
 
+        txtType = new Text(this, SWT.BORDER);
+        txtType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        txtType.setEnabled(false);
+        txtType.setEditable(false);
+
         Label lblX = new Label(this, SWT.NONE);
-        fd_lblType.bottom = new FormAttachment(lblX, -13);
-        FormData fd_lblX = new FormData();
-        fd_lblX.right = new FormAttachment(lblName, 0, SWT.RIGHT);
-        lblX.setLayoutData(fd_lblX);
         lblX.setText("X:");
 
-        Label lblY = new Label(this, SWT.NONE);
-        FormData fd_lblY = new FormData();
-        fd_lblY.right = new FormAttachment(lblName, 0, SWT.RIGHT);
-        lblY.setLayoutData(fd_lblY);
-        lblY.setText("Y:");
-
-        Label lblWidth = new Label(this, SWT.NONE);
-        fd_lblY.bottom = new FormAttachment(lblWidth, -9);
-        FormData fd_lblWidth = new FormData();
-        fd_lblWidth.right = new FormAttachment(lblName, 0, SWT.RIGHT);
-        fd_lblWidth.top = new FormAttachment(0, 147);
-        lblWidth.setLayoutData(fd_lblWidth);
-        lblWidth.setText("Width:");
-
-        Label lblHeight = new Label(this, SWT.NONE);
-        FormData fd_lblHeight = new FormData();
-        fd_lblHeight.right = new FormAttachment(lblName, 0, SWT.RIGHT);
-        fd_lblHeight.top = new FormAttachment(lblWidth, 18);
-        lblHeight.setLayoutData(fd_lblHeight);
-        lblHeight.setText("Height:");
-
         spinnerX = new Spinner(this, SWT.BORDER);
-        fd_txtType.bottom = new FormAttachment(spinnerX, -6);
-        fd_lblX.top = new FormAttachment(0, 87);
-        FormData fd_spinnerX = new FormData();
-        fd_spinnerX.top = new FormAttachment(0, 82);
-        fd_spinnerX.right = new FormAttachment(txtName, 0, SWT.RIGHT);
-        fd_spinnerX.left = new FormAttachment(lblX, 6);
-        spinnerX.setLayoutData(fd_spinnerX);
-
+        spinnerX.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         spinnerX.setMinimum(Integer.MIN_VALUE);
         spinnerX.setMaximum(Integer.MAX_VALUE);
         spinnerX.setSelection(50);
         spinnerX.setIncrement(1);
         spinnerX.setPageIncrement(50);
 
-        spinnerY = new Spinner(this, SWT.BORDER);
-        fd_spinnerX.bottom = new FormAttachment(spinnerY, -9);
-        FormData fd_spinnerY = new FormData();
-        fd_spinnerY.left = new FormAttachment(txtName, 0, SWT.LEFT);
-        fd_spinnerY.right = new FormAttachment(100, -10);
-        spinnerY.setLayoutData(fd_spinnerY);
+        Label lblY = new Label(this, SWT.NONE);
+        lblY.setText("Y:");
 
+        spinnerY = new Spinner(this, SWT.BORDER);
+        spinnerY.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         spinnerY.setMinimum(Integer.MIN_VALUE);
         spinnerY.setMaximum(Integer.MAX_VALUE);
         spinnerY.setSelection(50);
         spinnerY.setIncrement(1);
         spinnerY.setPageIncrement(50);
 
-        spinnerWidth = new Spinner(this, SWT.BORDER);
-        fd_spinnerY.bottom = new FormAttachment(spinnerWidth, -6);
-        FormData fd_spinnerWidth = new FormData();
-        fd_spinnerWidth.top = new FormAttachment(0, 147);
-        fd_spinnerWidth.left = new FormAttachment(txtName, 0, SWT.LEFT);
-        fd_spinnerWidth.right = new FormAttachment(100, -10);
-        spinnerWidth.setLayoutData(fd_spinnerWidth);
+        Label lblWidth = new Label(this, SWT.NONE);
+        lblWidth.setText("Width:");
 
+        spinnerWidth = new Spinner(this, SWT.BORDER);
+        spinnerWidth.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         spinnerWidth.setMinimum(0);
         spinnerWidth.setMaximum(Integer.MAX_VALUE);
         spinnerWidth.setSelection(10);
         spinnerWidth.setIncrement(1);
         spinnerWidth.setPageIncrement(10);
 
-        spinnerHeight = new Spinner(this, SWT.BORDER);
-        FormData fd_spinnerHeight = new FormData();
-        fd_spinnerHeight.top = new FormAttachment(spinnerWidth, 7);
-        fd_spinnerHeight.right = new FormAttachment(txtName, 0, SWT.RIGHT);
-        fd_spinnerHeight.left = new FormAttachment(lblHeight, 6);
-        spinnerHeight.setLayoutData(fd_spinnerHeight);
+        Label lblHeight = new Label(this, SWT.NONE);
+        lblHeight.setText("Height:");
 
+        spinnerHeight = new Spinner(this, SWT.BORDER);
+        spinnerHeight.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         spinnerHeight.setMinimum(0);
         spinnerHeight.setMaximum(Integer.MAX_VALUE);
         spinnerHeight.setSelection(10);
         spinnerHeight.setIncrement(1);
         spinnerHeight.setPageIncrement(10);
+
+        new Label(this, SWT.NONE);
+        new Label(this, SWT.NONE);
+        new Label(this, SWT.NONE);
+        new Label(this, SWT.NONE);
+        new Label(this, SWT.NONE);
 
 
         Button btnApplyChanges = new Button(this, SWT.NONE);
@@ -170,10 +122,7 @@ public class RectangleForm extends Composite {
                 }
             }
         });
-        FormData fd_btnApplyChanges = new FormData();
-        fd_btnApplyChanges.top = new FormAttachment(lblHeight, 26);
-        fd_btnApplyChanges.right = new FormAttachment(txtName, 0, SWT.RIGHT);
-        btnApplyChanges.setLayoutData(fd_btnApplyChanges);
+
         btnApplyChanges.setText("Apply changes");
     }
 

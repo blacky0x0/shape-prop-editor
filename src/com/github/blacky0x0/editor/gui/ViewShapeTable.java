@@ -82,7 +82,8 @@ public class ViewShapeTable extends ViewPart {
                     }
                     else
                     {
-                        // TODO: a multi line selection => hide properties form
+                        // A multi line selection => hide properties form
+                        mainWindow.hidePropertiesForm();
                     }
                 }
             }
@@ -154,6 +155,8 @@ public class ViewShapeTable extends ViewPart {
             logger.info(
                     "Selected shapes have been removed:\n"
                             .concat(getFormattedString(selectedShapes)));
+
+            mainWindow.hidePropertiesForm();
         }
     }
 

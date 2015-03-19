@@ -41,7 +41,7 @@ public class Oval extends Shape {
 
     @Override
     public String toString() {
-        return "Rectangle{" +
+        return "Oval{" +
                 "name='" + name + '\'' +
                 ", type='" + getClass().getSimpleName() + '\'' +
                 ", x=" + x +

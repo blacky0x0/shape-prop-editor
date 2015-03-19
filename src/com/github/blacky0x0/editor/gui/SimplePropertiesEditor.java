@@ -1,7 +1,6 @@
 package com.github.blacky0x0.editor.gui;
 
 import com.github.blacky0x0.editor.model.Oval;
-import com.github.blacky0x0.editor.model.Property;
 import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
 import com.github.blacky0x0.editor.repository.ListStorage;
@@ -10,28 +9,19 @@ import com.github.blacky0x0.editor.util.GuiUtil;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import java.util.logging.*;
 import java.awt.*;
-import java.util.Map;
 
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 /**
  * User: blacky
@@ -71,12 +61,11 @@ public class SimplePropertiesEditor {
     private SashForm sashForm;
     // Two tables
     private ViewShapeTable shapesTable;
-    private Table propertiesTable;
 
     // Vary properties forms
-    Composite propertyForm;
-    RectangleForm rectangleForm;
-    //OvalForm ovalForm;
+    private Composite propertyForm;
+    private RectangleForm rectangleForm;
+    private OvalForm ovalForm;
 
     public static void main (String [] args) {
 
@@ -108,44 +97,48 @@ public class SimplePropertiesEditor {
 
         initMenu();
 
-        initTables();
+        initControls();
 
     }
 
+    public void hidePropertiesForm() {
+        ovalForm.setVisible(false);
+        rectangleForm.setVisible(false);
+    }
+
     public void updateForm(Rectangle rectangle) {
+        ovalForm.setVisible(false);
         rectangleForm.updateForm(rectangle);
         rectangleForm.setVisible(true);
     }
 
     public void updateForm(Oval oval) {
-        //rectangleForm.updateForm(oval);
         rectangleForm.setVisible(false);
+        ovalForm.updateForm(oval);
+        ovalForm.setVisible(true);
     }
 
-    private void initTables() {
+    private void initControls() {
         
         sashForm = new SashForm(shell, SWT.NONE);
 
         // create a table with shapes
         shapesTable = new ViewShapeTable(this, shell, sashForm, storage);
 
+        // composite form to show properties
         propertyForm = new Composite(sashForm, SWT.NONE);
         propertyForm.setLayout(new FormLayout());
+        propertyForm.setVisible(true);
 
         rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
-        //ovalForm = new OvalForm(this, shell, propertyForm);
+        ovalForm = new OvalForm(propertyForm, SWT.NONE);
 
+        // hide forms if no selection in the table
         rectangleForm.setVisible(false);
+        ovalForm.setVisible(false);
 
+        sashForm.setWeights(new int[] {7,4});
 
-        sashForm.setWeights(new int[] {3,2});
-        
-        //composite = new Composite(sashForm, SWT.NONE);
-        //sashForm.setWeights(new int[] {3,2});
-
-        // create something to show properties (ie: a table / tree)
-
-        //sashForm.setWeights(new int[]{3, 2});
     }
 
     public void initMenu() {
