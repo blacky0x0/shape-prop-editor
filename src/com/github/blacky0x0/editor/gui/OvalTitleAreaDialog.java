@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class OvalTitleAreaDialog extends TitleAreaDialog {
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
-    // TODO: refactor with JFace binding
+    // TODO: refactor -> extract code to general class
     private Text    txtName;
     private Spinner spinnerX;
     private Spinner spinnerY;
@@ -139,20 +139,9 @@ public class OvalTitleAreaDialog extends TitleAreaDialog {
         isCircle.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent (Event event) {
-
-                if (isCircle.getSelection())
-                {
-                    labelRadiusX.setText("Radius:");
-                    labelRadiusY.setVisible(false);
-                    spinnerRadiusY.setVisible(false);
-                }
-                else
-                {
-                    labelRadiusX.setText("RadiusX:");
-                    labelRadiusY.setVisible(true);
-                    spinnerRadiusY.setVisible(true);
-                }
-
+            // change state of a checkbox
+            isCircle.setSelection(isCircle.getSelection());
+            initControlsRightState();
             }
         });
 
@@ -240,5 +229,19 @@ public class OvalTitleAreaDialog extends TitleAreaDialog {
         return oval;
     }
 
-
+    private void initControlsRightState() {
+        if (isCircle.getSelection())
+        {
+            labelRadiusX.setText("Radius:");
+            labelRadiusY.setVisible(false);
+            spinnerRadiusY.setVisible(false);
+            spinnerRadiusY.setSelection(spinnerRadiusX.getSelection());
+        }
+        else
+        {
+            labelRadiusX.setText("RadiusX:");
+            labelRadiusY.setVisible(true);
+            spinnerRadiusY.setVisible(true);
+        }
+    }
 }

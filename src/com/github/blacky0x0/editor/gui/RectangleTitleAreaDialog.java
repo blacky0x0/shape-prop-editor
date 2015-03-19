@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class RectangleTitleAreaDialog extends TitleAreaDialog {
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
-    // TODO: refactor with JFace binding
+    // TODO: refactor -> extract code to general class
     private Text txtName;
     private Spinner spinnerX;
     private Spinner spinnerY;
