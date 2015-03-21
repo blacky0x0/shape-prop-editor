@@ -3,6 +3,8 @@ package com.github.blacky0x0.editor.gui;
 import com.github.blacky0x0.editor.model.Oval;
 import com.github.blacky0x0.editor.model.Rectangle;
 import com.github.blacky0x0.editor.model.Shape;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -54,7 +56,8 @@ public class ShapeTitleAreaDialog<T extends Shape> extends TitleAreaDialog {
 
     @Override
     protected void okPressed() {
-        super.okPressed();
+        if(shapeComposite.isValidState())
+            super.okPressed();
     }
 
     @Override
@@ -74,16 +77,28 @@ public class ShapeTitleAreaDialog<T extends Shape> extends TitleAreaDialog {
 
 
     public static void main(String[] args) {
-        Display display = new Display ();
-        Shell shell = new Shell (display);
+        final Display display = new Display ();
 
-        // Sample using
-        ShapeTitleAreaDialog<Rectangle> dialog = new ShapeTitleAreaDialog<>(shell, Rectangle.class);
-        dialog.create();
+        Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+            public void run() {
+                Shell shell = new Shell(display);
+                // Sample using
+                ShapeTitleAreaDialog<Rectangle> dialog = new ShapeTitleAreaDialog<>(shell, Rectangle.class);
+                dialog.create();
 
-        if (dialog.open() == Window.OK) {
-            // Get a shape from dialog
-            System.out.println(dialog.getShape());
-        }
+                if (dialog.open() == Window.OK) {
+                    // Get a shape from dialog
+                    System.out.println(dialog.getShape());
+                }
+
+                while (!shell.isDisposed()) {
+                    if (!display.readAndDispatch())
+                        display.sleep();
+                }
+            }
+        });
+
+        display.dispose();
+
     }
 }

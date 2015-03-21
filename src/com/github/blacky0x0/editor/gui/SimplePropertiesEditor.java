@@ -117,14 +117,14 @@ public class SimplePropertiesEditor {
 
     public void updateForm(Rectangle rectangle) {
         ovalForm.setVisible(false);
-//        rectangleForm.updateForm(rectangle);
+        rectangleForm.setShape(rectangle);
         rectangleForm.setVisible(true);
         lblSelectOneRow.setVisible(false);
     }
 
     public void updateForm(Oval oval) {
         rectangleForm.setVisible(false);
-//        ovalForm.updateForm(oval);
+        ovalForm.setShape(oval);
         ovalForm.setVisible(true);
         lblSelectOneRow.setVisible(false);
     }
@@ -195,9 +195,9 @@ public class SimplePropertiesEditor {
                     // Get a shape from dialog
                     Rectangle rectangle = dialog.getShape();
 
-                    //storage.add(rectangle);
+                    storage.add(rectangle);
 
-                    //logger.info(dialog.getShape().toString());
+                    logger.info(dialog.getShape().toString());
                 }
 
             }
@@ -215,9 +215,9 @@ public class SimplePropertiesEditor {
                     // Get a shape from dialog
                     Oval oval = dialog.getShape();
 
-                    //storage.add(oval);
+                    storage.add(oval);
 
-                    //logger.info(dialog.getShape().toString());
+                    logger.info(dialog.getShape().toString());
                 }
 
             }
