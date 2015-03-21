@@ -68,8 +68,10 @@ public class SimplePropertiesEditor {
 
     // Vary properties forms
     private Composite propertyForm;
-    private RectangleForm rectangleForm;
-    private OvalForm ovalForm;
+//    private RectangleForm rectangleForm;
+//    private OvalForm ovalForm;
+    private ShapeComposite<Rectangle> rectangleForm;
+    private ShapeComposite<Oval> ovalForm;
 
     private Label lblSelectOneRow;
 
@@ -115,14 +117,14 @@ public class SimplePropertiesEditor {
 
     public void updateForm(Rectangle rectangle) {
         ovalForm.setVisible(false);
-        rectangleForm.updateForm(rectangle);
+//        rectangleForm.updateForm(rectangle);
         rectangleForm.setVisible(true);
         lblSelectOneRow.setVisible(false);
     }
 
     public void updateForm(Oval oval) {
         rectangleForm.setVisible(false);
-        ovalForm.updateForm(oval);
+//        ovalForm.updateForm(oval);
         ovalForm.setVisible(true);
         lblSelectOneRow.setVisible(false);
     }
@@ -139,9 +141,11 @@ public class SimplePropertiesEditor {
         propertyForm.setVisible(true);
         propertyForm.setLayout(null);
 
-        rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
+//        rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
+        rectangleForm = new ShapeComposite<>(propertyForm, SWT.NONE, Rectangle.class);
         rectangleForm.setBounds(0, 0, 190, 270);
-        ovalForm = new OvalForm(propertyForm, SWT.NONE);
+//        ovalForm = new OvalForm(propertyForm, SWT.NONE);
+        ovalForm = new ShapeComposite<>(propertyForm, SWT.NONE, Oval.class);
         ovalForm.setBounds(0, 0, 190, 270);
 
         // hide forms if no selection in the table
@@ -183,16 +187,17 @@ public class SimplePropertiesEditor {
         createRectangle.addListener(SWT.Selection, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                RectangleTitleAreaDialog dialog = new RectangleTitleAreaDialog(shell);
+                //RectangleTitleAreaDialog dialog = new RectangleTitleAreaDialog(shell);
+                ShapeTitleAreaDialog<Rectangle> dialog = new ShapeTitleAreaDialog<>(shell, Rectangle.class);
                 dialog.create();
 
                 if (dialog.open() == org.eclipse.jface.window.Window.OK) {
-                    // Get a rectangle from dialog
-                    Rectangle rectangle = dialog.getRectangle();
+                    // Get a shape from dialog
+                    Rectangle rectangle = dialog.getShape();
 
-                    storage.add(rectangle);
+                    //storage.add(rectangle);
 
-                    logger.info(dialog.getRectangle().toString());
+                    //logger.info(dialog.getShape().toString());
                 }
 
             }
@@ -202,16 +207,17 @@ public class SimplePropertiesEditor {
             @Override
             public void handleEvent(Event e) {
 
-                OvalTitleAreaDialog dialog = new OvalTitleAreaDialog(shell);
+                //OvalTitleAreaDialog dialog = new OvalTitleAreaDialog(shell);
+                ShapeTitleAreaDialog<Oval> dialog = new ShapeTitleAreaDialog<>(shell, Oval.class);
                 dialog.create();
 
                 if (dialog.open() == org.eclipse.jface.window.Window.OK) {
-                    // Get a rectangle from dialog
-                    Oval oval = dialog.getOval();
+                    // Get a shape from dialog
+                    Oval oval = dialog.getShape();
 
-                    storage.add(oval);
+                    //storage.add(oval);
 
-                    logger.info(dialog.getOval().toString());
+                    //logger.info(dialog.getShape().toString());
                 }
 
             }

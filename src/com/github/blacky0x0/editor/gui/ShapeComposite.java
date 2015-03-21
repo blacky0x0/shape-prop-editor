@@ -25,28 +25,40 @@ import java.util.HashMap;
 public class ShapeComposite<T extends Shape> extends Composite {
     protected static HashMap<String, Pair> controls = new HashMap<>();
     protected Class<T> type;
-    protected Button applyBtn;
-    protected T shape;
+//    protected Button applyBtn;
+    protected T shape;  // TODO: make binding a shape with controls
 
     public ShapeComposite(Composite parent, int style, Class<T> type) {
         super(parent, style);
         this.type = type;
+
+        init();
     }
 
     public Class<T> getType() {
         return type;
     }
 
+    public T getShape() {
+        return shape;
+    }
+
+    public void setShape(T shape) {
+        this.shape = shape;
+    }
+
     public void init() {
-        setLayout(new GridLayout(2, false));
+        GridLayout layout = new GridLayout(2, false);
+        setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        setLayout(layout);
 
         // Make controls for fields of a class
         makeControls(getType().getSuperclass()); // ? extends Shape
         makeControls(getType());    // Shape
 
         new Label(this, SWT.NONE);  // just for alignment
-        applyBtn = new Button(this, SWT.NONE);
-        applyBtn.setText("Apply changes");
+//        applyBtn = new Button(this, SWT.NONE);
+//        applyBtn.setText("Apply changes");
     }
 
     protected void makeControls(Class clazz) {
@@ -62,9 +74,14 @@ public class ShapeComposite<T extends Shape> extends Composite {
                 Label label = new Label(this, SWT.NONE);
                 label.setText(field.getName() + ": ");
 
-                Text text = new Text(this, SWT.PUSH);
+                GridData data = new GridData();
+                data.grabExcessHorizontalSpace = true;
+                data.horizontalAlignment = GridData.FILL;
+
+                Text text = new Text(this, SWT.BORDER);
                 text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
                 text.setText(field.getName());
+                text.setLayoutData(data);
 
                 // save controls in a map
                 controls.put(field.getName(), new Pair(label, text));
@@ -109,7 +126,7 @@ public class ShapeComposite<T extends Shape> extends Composite {
                 shell.setLayout(new GridLayout(2, false));
 
                 ShapeComposite<Oval> shapeComposite = new ShapeComposite<>(shell, SWT.NONE, Oval.class);
-                shapeComposite.init();
+                //shapeComposite.init();
 
                 shell.pack();
 
