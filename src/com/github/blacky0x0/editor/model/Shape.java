@@ -11,9 +11,10 @@ public abstract class Shape { //implements ShapeIF {
     protected Integer x = 0;
     protected Integer y = 0;
     protected String name = "";
+    protected String type = getClass().getSimpleName();
     protected transient PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    protected Shape() {}
+    protected Shape() { this(0, 0, ""); }
 
     protected Shape(Integer x, Integer y, String name) {
         this.x = x;
@@ -54,11 +55,19 @@ public abstract class Shape { //implements ShapeIF {
         propertyChangeSupport.firePropertyChange("name", this.name, this.name = name);
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        propertyChangeSupport.firePropertyChange("type", this.type, this.type = type);
+    }
+
     @Override
     public String toString() {
         return "Shape{" +
                 "name='" + name + '\'' +
-                ", type='" + getClass().getSimpleName() + '\'' +
+                ", type='" + type + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 '}';

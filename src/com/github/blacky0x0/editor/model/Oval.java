@@ -10,7 +10,7 @@ public class Oval extends Shape {
     protected Integer radiusX = 0;
     protected Integer radiusY = 0;
 
-    public Oval() { super(); }
+    public Oval() { this(0, 0, "", 0, 0); }
 
     public Oval(Integer x, Integer y,
                      String name,
@@ -45,7 +45,7 @@ public class Oval extends Shape {
     public String toString() {
         return "Oval{" +
                 "name='" + name + '\'' +
-                ", type='" + getClass().getSimpleName() + '\'' +
+                ", type='" + type + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 ", radiusX=" + radiusX +
