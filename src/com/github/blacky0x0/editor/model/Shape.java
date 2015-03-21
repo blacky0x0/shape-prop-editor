@@ -8,10 +8,12 @@ import java.beans.PropertyChangeSupport;
  * Date: 15.03.15
  */
 public abstract class Shape { //implements ShapeIF {
-    protected Integer x;
-    protected Integer y;
-    protected String name;
+    protected Integer x = 0;
+    protected Integer y = 0;
+    protected String name = "";
     protected transient PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    protected Shape() {}
 
     protected Shape(Integer x, Integer y, String name) {
         this.x = x;

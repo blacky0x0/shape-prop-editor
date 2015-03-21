@@ -7,8 +7,10 @@ package com.github.blacky0x0.editor.model;
  */
 public class Oval extends Shape {
 
-    protected Integer radiusX;
-    protected Integer radiusY;
+    protected Integer radiusX = 0;
+    protected Integer radiusY = 0;
+
+    public Oval() { super(); }
 
     public Oval(Integer x, Integer y,
                      String name,

@@ -33,6 +33,18 @@ public class ShapeComposite<T extends Shape> extends Composite {
         this.type = type;
 
         init();
+        shape = newInstance();
+    }
+
+    public T newInstance() {
+        try {
+            return type.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Class<T> getType() {
