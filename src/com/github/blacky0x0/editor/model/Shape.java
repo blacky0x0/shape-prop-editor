@@ -11,7 +11,7 @@ public abstract class Shape { //implements ShapeIF {
     protected Integer x;
     protected Integer y;
     protected String name;
-    protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    protected transient PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     protected Shape(Integer x, Integer y, String name) {
         this.x = x;
