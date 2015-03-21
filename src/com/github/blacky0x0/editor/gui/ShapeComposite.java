@@ -82,7 +82,7 @@ public class ShapeComposite<T extends Shape> extends Composite {
             public IStatus validate(Object value) {
                 if (value instanceof Integer) {
                     String s = String.valueOf(value);
-                    if (s.matches("\\d*")) {
+                    if (s.matches("-?\\d*")) {
                         //isValidState.set(true);
                         return ValidationStatus.ok();
                     }
@@ -106,6 +106,8 @@ public class ShapeComposite<T extends Shape> extends Composite {
         strategy.setAfterConvertValidator(validator);
         bindValue = context.bindValue(target, model, strategy, null);
         ControlDecorationSupport.create(bindValue, SWT.TOP | SWT.LEFT);
+
+
 
 
         shape = newInstance();
