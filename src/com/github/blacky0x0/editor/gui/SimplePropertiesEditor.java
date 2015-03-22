@@ -38,57 +38,31 @@ public class SimplePropertiesEditor {
     private WritableList storage = new WritableList(ListStorage.getShapes(), Shape.class);
 
     private static final Display display = new Display ();
-
-    // The application components
     private static final Shell shell = new Shell (display);
 
-    // The Menu hierarchy
-    private final Menu bar = new Menu (shell, SWT.BAR);
-    private MenuItem compositeFileItem;
-    private final String FILE_ITEM_TEXT = "&File";
-    private Menu compositeFileMenu;
-    private MenuItem modelSubItem;
-    private Menu modelItemSubMenu;
-    private final String MODEL_SUB_ITEM_TEXT = "&Model";
-    private MenuItem createRectangle;
-    private final String CREATE_RECTANGLE_TEXT = "Create &Rectangle";
-    private MenuItem createOval;
-    private final String CREATE_OVAL_TEXT = "Create &Oval";
-    private MenuItem removeShape;
-    private final String REMOVE_SHAPE_TEXT = "Remove";
-    private final int REMOVE_SHAPE_ACCELERATOR = SWT.MOD1 + 'D';
-    private MenuItem exit;
-    private final String EXIT_TEXT = "E&xit";
-    private final int EXIT_ACCELERATOR = SWT.MOD1 + 'X';
-
-    // A sashform contains two tables
+    // The application components
+    private ShapeMenu menu;
+    // A sashform contains a shapesTable & one of the properties form
     private SashForm sashForm;
-    // Two tables
     private ViewShapeTable shapesTable;
-
     // Vary properties forms
     private Composite propertyForm;
-//    private RectangleForm rectangleForm;
-//    private OvalForm ovalForm;
     private ShapeComposite<Rectangle> rectangleForm;
     private ShapeComposite<Oval> ovalForm;
-
     private Label lblSelectOneRow;
 
     public static void main (String [] args) {
 
         Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
             public void run() {
-                //Shell shell = new Shell(display);
-
                 SimplePropertiesEditor editor = new SimplePropertiesEditor();
                 editor.init();
 
                 // Set a window at center the current screen
+                // TODO: refactor with a Display toolkit
                 Point locationPoint = GuiUtil.computeCenterPoint(shell.getBounds());
                 shell.setLocation((int) locationPoint.getX(), (int) locationPoint.getY());
 
-                //shell.pack();
                 shell.setSize(600, 400);
                 shell.open();
                 while (!shell.isDisposed()) {
@@ -103,7 +77,7 @@ public class SimplePropertiesEditor {
 
     private void init() {
 
-        initMenu();
+        menu = new ShapeMenu(shell, storage, shapesTable);
 
         initControls();
 
@@ -141,10 +115,9 @@ public class SimplePropertiesEditor {
         propertyForm.setVisible(true);
         propertyForm.setLayout(null);
 
-//        rectangleForm = new RectangleForm(propertyForm, SWT.NONE);
         rectangleForm = new ShapeComposite<>(propertyForm, SWT.NONE, Rectangle.class);
         rectangleForm.setBounds(0, 0, 190, 270);
-//        ovalForm = new OvalForm(propertyForm, SWT.NONE);
+
         ovalForm = new ShapeComposite<>(propertyForm, SWT.NONE, Oval.class);
         ovalForm.setBounds(0, 0, 190, 270);
 
@@ -160,92 +133,4 @@ public class SimplePropertiesEditor {
 
     }
 
-    private void initMenu() {
-        shell.setLayout(new FillLayout(SWT.HORIZONTAL));
-        shell.setMenuBar(bar);
-
-        compositeFileItem = new MenuItem (bar, SWT.CASCADE);
-        compositeFileItem.setText(FILE_ITEM_TEXT);
-
-        compositeFileMenu = new Menu (shell, SWT.DROP_DOWN);
-        compositeFileItem.setMenu(compositeFileMenu);
-
-        modelSubItem = new MenuItem (compositeFileMenu, SWT.CASCADE);
-        modelSubItem.setText(MODEL_SUB_ITEM_TEXT);
-
-        modelItemSubMenu = new Menu (shell, SWT.DROP_DOWN);
-        modelSubItem.setMenu(modelItemSubMenu);
-
-        createRectangle = new MenuItem (modelItemSubMenu, SWT.PUSH);
-        createOval = new MenuItem (modelItemSubMenu, SWT.PUSH);
-        removeShape = new MenuItem (modelItemSubMenu, SWT.PUSH);
-
-        createRectangle.setText(CREATE_RECTANGLE_TEXT);
-        createOval.setText(CREATE_OVAL_TEXT);
-        removeShape.setText(REMOVE_SHAPE_TEXT);
-
-        createRectangle.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                //RectangleTitleAreaDialog dialog = new RectangleTitleAreaDialog(shell);
-                ShapeTitleAreaDialog<Rectangle> dialog = new ShapeTitleAreaDialog<>(shell, Rectangle.class);
-                dialog.create();
-
-                if (dialog.open() == org.eclipse.jface.window.Window.OK) {
-                    // Get a shape from dialog
-                    Rectangle rectangle = dialog.getShape();
-
-                    storage.add(rectangle);
-
-                    logger.info(dialog.getShape().toString());
-                }
-
-            }
-        });
-
-        createOval.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-
-                //OvalTitleAreaDialog dialog = new OvalTitleAreaDialog(shell);
-                ShapeTitleAreaDialog<Oval> dialog = new ShapeTitleAreaDialog<>(shell, Oval.class);
-                dialog.create();
-
-                if (dialog.open() == org.eclipse.jface.window.Window.OK) {
-                    // Get a shape from dialog
-                    Oval oval = dialog.getShape();
-
-                    storage.add(oval);
-
-                    logger.info(dialog.getShape().toString());
-                }
-
-            }
-        });
-
-        removeShape.setAccelerator(REMOVE_SHAPE_ACCELERATOR);
-        removeShape.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-
-               shapesTable.removeSelectedItemsWithConfirmation();
-
-            }
-        });
-
-        compositeFileItem.setMenu(compositeFileMenu);
-        
-        new MenuItem(compositeFileMenu, SWT.SEPARATOR);
-
-        exit = new MenuItem (compositeFileMenu, SWT.PUSH);
-
-        exit.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                System.exit(0);
-            }
-        });
-        exit.setText(EXIT_TEXT);
-        exit.setAccelerator(EXIT_ACCELERATOR);
-    }
 }
