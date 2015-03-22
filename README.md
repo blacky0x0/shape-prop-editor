@@ -39,10 +39,9 @@ To start this stand-alone application you must run main method from the SimplePr
 
 Images
 -------------------------
-![](./images/main_screen.png?raw=true "Main screen" =250x)
+<img src="./images/main_screen.png" alt="Main screen" style="width: 200px;"/>
 
+<img src="./images/menu.png" alt="Menu" style="width: 100px;"/>
 
-![](./images/menu.png?raw=true "Menu" =150x)
+<img src="./images/create_dialog.png" alt="Creation dialog" style="width: 150px;"/>
 
-
-![](./images/create_dialog.png?raw=true "Creation dialog" =200x)
