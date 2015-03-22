@@ -37,3 +37,8 @@ Starting desktop application
 To start this stand-alone application you must run main method from the SimplePropertiesEditor class
 
 
+Images
+-------------------------
+![Alt text](./images/main_screen.png?raw=true "Creation dialog")
+![Alt text](./images/menu.png?raw=true "Creation dialog")
+![Alt text](./images/create_dialog.png?raw=true "Creation dialog")
