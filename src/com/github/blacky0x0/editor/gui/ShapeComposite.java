@@ -68,51 +68,67 @@ public class ShapeComposite<T extends Shape> extends Composite {
     private void bindValues() {
         DataBindingContext context = new DataBindingContext();
 
-        IObservableValue target = WidgetProperties.text(SWT.Modify).observe(controls.get("name").getControl());
-        IObservableValue model = BeanProperties.value("name").observeDetail(bindedShape);
-        context.bindValue(target, model);
+        String[] propertiesOrder = Property.getShapePropertiesOrder(getType().getSimpleName());
 
-        // Bind the x including a validator
-        target = WidgetProperties.text(SWT.Modify).observe(controls.get("x").getControl());
-        model = BeanProperties.value(Rectangle.class, "x").observeDetail(bindedShape);
+        if (propertiesOrder.length != 0)
+        {
+            for (final String propertyName : propertiesOrder) {
 
-        // add an validator so that field value can only be a number
-        IValidator validator = new IValidator() {
-            @Override
-            public IStatus validate(Object value) {
-                if (value instanceof Integer) {
-                    String s = String.valueOf(value);
-                    if (s.matches("-?\\d*")) {
-                        //isValidState.set(true);
-                        return ValidationStatus.ok();
-                    }
+                Control targetControl = controls.get(propertyName).getControl();
+                IObservableValue target = WidgetProperties.text(SWT.Modify).observe(targetControl);
+
+                IObservableValue model = BeanProperties.value(getType(), propertyName).observeDetail(bindedShape);
+
+                if (Property.getPropertyRule(propertyName) == Property.Rule.NO_RULE)
+                {
+                    context.bindValue(target, model);
+                    continue;
                 }
-                //isValidState.set(false);
-                return ValidationStatus.error("Not a number");
+
+                System.out.println("Integer class");
+                // add a validator so that field value can only be a number
+                IValidator validator = new IValidator() {
+                    @Override
+                    public IStatus validate(Object value) {
+                        if (value instanceof Integer) {
+                            String s = String.valueOf(value);
+
+                            if (s.matches(Property.getPropertyRule(propertyName).getRegExp())) {
+                                //isValidState.set(true);
+                                return ValidationStatus.ok();
+                            }
+                        }
+                        //isValidState.set(false);
+                        return ValidationStatus
+                                .error(Property.getPropertyRule(propertyName).getErrorMsg());
+                    }
+                };
+
+                UpdateValueStrategy strategy = new UpdateValueStrategy();
+                strategy.setBeforeSetValidator(validator);
+
+                Binding bindValue = context.bindValue(target, model, strategy, null);
+
+                // add some decorations
+                ControlDecorationSupport.create(bindValue, SWT.TOP | SWT.LEFT);
             }
-        };
-
-        UpdateValueStrategy strategy = new UpdateValueStrategy();
-        //strategy.setBeforeSetValidator(validator);
-        strategy.setAfterConvertValidator(validator);
-
-        Binding bindValue = context.bindValue(target, model, strategy, null);
-
-        // add some decorations
-        ControlDecorationSupport.create(bindValue, SWT.TOP | SWT.LEFT);
-
-        target = WidgetProperties.text(SWT.Modify).observe(controls.get("y").getControl());
-        model = BeanProperties.value(Rectangle.class, "y").observeDetail(bindedShape);
-        strategy.setAfterConvertValidator(validator);
-        bindValue = context.bindValue(target, model, strategy, null);
-        ControlDecorationSupport.create(bindValue, SWT.TOP | SWT.LEFT);
-
-
-
+        }
+        else
+        {
+            logger.warning("No properties order was found for this type of shape: "
+                    .concat(getType().getName())
+                    .concat(" in ")
+                    .concat(Property.class.getName()));
+        }
 
         shape = newInstance();
         bindedShape.setValue(shape);
     }
+
+    private void bindValue(Control control) {
+
+    }
+
 
     public T newInstance() {
         try { return type.newInstance(); }
@@ -140,14 +156,12 @@ public class ShapeComposite<T extends Shape> extends Composite {
         setLayout(layout);
 
         // Make controls for fields of a class
-        //makeControls(getType().getSuperclass()); // ? extends Shape
-        makeControls(getType());    // Shape
-
+        makeControls();
     }
 
-    protected void makeControls(Class clazz) {
+    protected void makeControls() {
 
-        String[] propertiesOrder = Property.getShapePropertiesOrder(clazz.getSimpleName());
+        String[] propertiesOrder = Property.getShapePropertiesOrder(getType().getSimpleName());
 
         if (propertiesOrder.length != 0)
         {
@@ -171,7 +185,7 @@ public class ShapeComposite<T extends Shape> extends Composite {
         else
         {
             logger.warning("No properties order was found for this type of shape: "
-                    .concat(clazz.getName())
+                    .concat(getType().getName())
                     .concat(" in ")
                     .concat(Property.class.getName()));
         }
