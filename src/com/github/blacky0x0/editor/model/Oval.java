@@ -7,8 +7,10 @@ package com.github.blacky0x0.editor.model;
  */
 public class Oval extends Shape {
 
-    protected Integer radiusX;
-    protected Integer radiusY;
+    protected Integer radiusX = 0;
+    protected Integer radiusY = 0;
+
+    public Oval() { this(0, 0, "", 0, 0); }
 
     public Oval(Integer x, Integer y,
                      String name,
@@ -43,7 +45,7 @@ public class Oval extends Shape {
     public String toString() {
         return "Oval{" +
                 "name='" + name + '\'' +
-                ", type='" + getClass().getSimpleName() + '\'' +
+                ", type='" + type + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 ", radiusX=" + radiusX +

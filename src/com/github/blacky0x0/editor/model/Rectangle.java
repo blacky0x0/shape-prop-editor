@@ -7,8 +7,10 @@ package com.github.blacky0x0.editor.model;
  */
 public class Rectangle extends Shape {
 
-    protected Integer width;
-    protected Integer height;
+    protected Integer width = 0;
+    protected Integer height = 0;
+
+    public Rectangle() { this(0, 0, "", 0, 0); }
 
     public Rectangle(Integer x, Integer y,
                      String name,
@@ -38,7 +40,7 @@ public class Rectangle extends Shape {
     public String toString() {
         return "Rectangle{" +
                 "name='" + name + '\'' +
-                ", type='" + getClass().getSimpleName() + '\'' +
+                ", type='" + type + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 ", width=" + width +
