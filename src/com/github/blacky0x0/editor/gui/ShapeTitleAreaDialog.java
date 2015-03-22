@@ -56,8 +56,7 @@ public class ShapeTitleAreaDialog<T extends Shape> extends TitleAreaDialog {
 
     @Override
     protected void okPressed() {
-        if(shapeComposite.isValidState())
-            super.okPressed();
+        super.okPressed();
     }
 
     @Override

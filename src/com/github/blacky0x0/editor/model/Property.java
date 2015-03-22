@@ -15,26 +15,36 @@ import java.util.HashMap;
  */
 public enum Property {
 
-    NAME    ("name",    String.class,  Rule.NO_RULE, "Name: "),
-    X       ("x",       Integer.class, Rule.INTEGER_RULE, "X: "),
-    Y       ("y",       Integer.class, Rule.INTEGER_RULE, "Y: "),
-    WIDTH   ("width",   Integer.class, Rule.POSITIVE_INTEGER_RULE, "Width: "),
-    HEIGHT  ("height",  Integer.class, Rule.POSITIVE_INTEGER_RULE, "Height: "),
-    RADIUS  ("radius",  Integer.class, Rule.POSITIVE_INTEGER_RULE, "Radius: "),
-    RADIUS_X("radiusX", Integer.class, Rule.POSITIVE_INTEGER_RULE, "RadiusX: "),
-    RADIUS_Y("radiusY", Integer.class, Rule.POSITIVE_INTEGER_RULE, "RadiusY: ");
+    NAME    ("name",    String.class,  PropertyChain.NONE,   Rule.NO_RULE, "Name: "),
+    X       ("x",       Integer.class, PropertyChain.NONE,   Rule.INTEGER_RULE, "X: "),
+    Y       ("y",       Integer.class, PropertyChain.NONE,   Rule.INTEGER_RULE, "Y: "),
+    WIDTH   ("width",   Integer.class, PropertyChain.NONE,   Rule.POSITIVE_INTEGER_RULE, "Width:    "),
+    HEIGHT  ("height",  Integer.class, PropertyChain.NONE,   Rule.POSITIVE_INTEGER_RULE, "Height:   "),
+    RIGHT   ("right",   Boolean.class, PropertyChain.NONE,   Rule.NO_RULE, ""),
+    RADIUS_X("radiusX", Integer.class, PropertyChain.RADIUS, Rule.POSITIVE_INTEGER_RULE, "RadiusX: "),
+    RADIUS_Y("radiusY", Integer.class, PropertyChain.RADIUS, Rule.POSITIVE_INTEGER_RULE, "RadiusY: ");
 
-    private String propertyName;
-    private Class  propertyClass;
-    private Rule   rule;
-    private String printableName;
+    private final String propertyName;
+    private final Class  propertyClass;
+    private final PropertyChain binding;
+    private final Rule   rule;
+    private final String printableName;
 
-    private Property(String propertyName, Class propertyClass, Rule rule, String printableName) {
+    private Property(final String propertyName, final Class propertyClass, final PropertyChain binding, final Rule rule, final String printableName) {
         this.propertyName = propertyName;
         this.propertyClass = propertyClass;
+        this.binding = binding;
         this.rule = rule;
         this.printableName = printableName;
     }
+
+    // Make an immutable map
+    private static final HashMap<String, PropertyChain> PROPERTY_BINDING_MAP = new HashMap<String, PropertyChain>() {
+        {
+            for(Property item : Property.values())
+                put(item.propertyName, item.binding);
+        }
+    };
 
     // Make an immutable map
     private static final HashMap<String, Rule> PROPERTY_RULE_MAP = new HashMap<String, Rule>() {
@@ -53,6 +63,14 @@ public enum Property {
     };
 
     // Make an immutable map
+    private static final HashMap<String, Property> PROPERTY_VALUES_MAP = new HashMap<String, Property>() {
+        {
+            for(Property item : Property.values())
+                put(item.propertyName, item);
+        }
+    };
+
+    // Make an immutable map
     private static final HashMap<String, String> PRINTABLE_VALUES_MAP = new HashMap<String, String>() {
         {
             for(Property item : Property.values())
@@ -60,7 +78,7 @@ public enum Property {
         }
     };
 
-    private static final String[] OVAL_PROPERTIES_ORDER = {"name", "x", "y", "radiusX", "radiusY"};
+    private static final String[] OVAL_PROPERTIES_ORDER = {"name", "x", "y", "right", "radiusX", "radiusY"};
     private static final String[] RECTANGLE_PROPERTIES_ORDER = {"name", "x", "y", "width", "height"};
     private static final String[] EMPTY_PROPERTIES_ORDER = {};
 
@@ -80,6 +98,19 @@ public enum Property {
     }
 
     /**
+     * Returns a Property for a received property name
+     * @param propertyName a property of Shape class
+     * @return a Property or null if a property not found
+     */
+    public static Property getPropertyByName(String propertyName) {
+
+        if (PROPERTY_VALUES_MAP.get(propertyName) != null)
+            return PROPERTY_VALUES_MAP.get(propertyName);
+
+        return null;
+    }
+
+    /**
      * Returns a class for a received property name
      * @param propertyName a property of Shape class
      * @return a class or String.class if a property name not found
@@ -90,6 +121,19 @@ public enum Property {
             return PROPERTY_CLASS_MAP.get(propertyName);
 
         return String.class;
+    }
+
+    /**
+     * Returns a binding current property with others for a received property name
+     * @param propertyName a property of Shape class
+     * @return a binding or Binding.NONE if a property name not found
+     */
+    public static PropertyChain getPropertyBinding(String propertyName) {
+
+        if (PROPERTY_BINDING_MAP.get(propertyName) != null)
+            return PROPERTY_BINDING_MAP.get(propertyName);
+
+        return PropertyChain.NONE;
     }
 
     /**
@@ -120,6 +164,18 @@ public enum Property {
 
     @Override
     public String toString() {
+        return printableName;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public Class getPropertyClass() {
+        return propertyClass;
+    }
+
+    public String getPrintableName() {
         return printableName;
     }
 
