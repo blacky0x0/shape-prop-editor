@@ -85,7 +85,6 @@ public class ShapeComposite<T extends Shape> extends Composite {
                     continue;
                 }
 
-                System.out.println("Integer class");
                 // add a validator so that field value can only be a number
                 IValidator validator = new IValidator() {
                     @Override
