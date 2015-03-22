@@ -58,12 +58,13 @@ public class SimplePropertiesEditor {
                 SimplePropertiesEditor editor = new SimplePropertiesEditor();
                 editor.init();
 
+                shell.setSize(600, 400);
+
                 // Set a window at center the current screen
                 // TODO: refactor with a Display toolkit
                 Point locationPoint = GuiUtil.computeCenterPoint(shell.getBounds());
                 shell.setLocation((int) locationPoint.getX(), (int) locationPoint.getY());
 
-                shell.setSize(600, 400);
                 shell.open();
                 while (!shell.isDisposed()) {
                     if (!display.readAndDispatch())
@@ -76,11 +77,8 @@ public class SimplePropertiesEditor {
     }
 
     private void init() {
-
-        menu = new ShapeMenu(shell, storage, shapesTable);
-
         initControls();
-
+        menu = new ShapeMenu(shell, storage, shapesTable);
     }
 
     public void hidePropertiesForm() {
@@ -116,10 +114,10 @@ public class SimplePropertiesEditor {
         propertyForm.setLayout(null);
 
         rectangleForm = new ShapeComposite<>(propertyForm, SWT.NONE, Rectangle.class);
-        rectangleForm.setBounds(0, 0, 190, 270);
+        rectangleForm.setBounds(0, 0, 220, 270);
 
         ovalForm = new ShapeComposite<>(propertyForm, SWT.NONE, Oval.class);
-        ovalForm.setBounds(0, 0, 190, 270);
+        ovalForm.setBounds(0, 0, 220, 270);
 
         // hide forms if no selection in the table
         rectangleForm.setVisible(false);
@@ -129,7 +127,7 @@ public class SimplePropertiesEditor {
         lblSelectOneRow.setBounds(10, 23, 204, 29);
         lblSelectOneRow.setText("Whether a row is selected?");
 
-        sashForm.setWeights(new int[] {7,4});
+        sashForm.setWeights(new int[] {13,8});
 
     }
 

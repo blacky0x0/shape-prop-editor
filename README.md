@@ -37,3 +37,11 @@ Starting desktop application
 To start this stand-alone application you must run main method from the SimplePropertiesEditor class
 
 
+Images
+-------------------------
+<img src="./images/main_screen.png" alt="Main screen" style="width: 200px;"/>
+
+<img src="./images/menu.png" alt="Menu" style="width: 100px;"/>
+
+<img src="./images/create_dialog.png" alt="Creation dialog" style="width: 150px;"/>
+
